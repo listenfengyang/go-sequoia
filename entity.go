@@ -39,23 +39,23 @@ type NePayDepositRsp struct {
 }
 
 type DepositData struct {
-	UserName           string `json:"user_name" mapstructure:"user_name"`                 //商户号              //客户真实姓名，非必填
-	Amount             string `json:"amount" mapstructure:"amount"`                       //金额（小数点后取2位）
-	OrderNumber        string `json:"orderNumber" mapstructure:"order_number"`            //商户订单号            //唯一订单号
-	SystemOrderNumber  string `json:"systemOrderNumber" mapstructure:"systemOrderNumber"` //平台订单号
-	NotifyUrl          string `json:"notifyUrl" mapstructure:"notifyUrl"`                 //异步通知地址
-	ReturnUrl          string `json:"returnUrl" mapstructure:"returnUrl"`                 //跳转URL
-	CreatedAt          string `json:"createdAt" mapstructure:"createdAt"`                 //建立时间
-	ConfirmedAt        string `json:"confirmedAt" mapstructure:"confirmedAt"`             //成功时间
-	Status             int32  `json:"status" mapstructure:"status"`                       //订单状态：1、2、3、7、11 处理中 | 4、5 成功 | 6、8 失败
-	Sign               string `json:"sign" mapstructure:"sign"`                           //签名
-	CasherUrl          string `json:"casherUrl" mapstructure:"casherUrl"`                 //以下特定通道才有
-	QrcodeUrl          string `json:"qrcodeUrl" mapstructure:"qrcodeUrl"`
-	SchemeUrl          string `json:"schemeUrl" mapstructure:"schemeUrl"`
-	ReceiverAccount    string `json:"receiverAccount" mapstructure:"receiverAccount"`
-	ReceiverBankName   string `json:"receiverBankName" mapstructure:"receiverBankName"`
-	ReceiverBankBranch string `json:"receiverBankBranch" mapstructure:"receiverBankBranch"`
-	ReceiverName       string `json:"receiverName" mapstructure:"receiverName"`
+	UserName           string `json:"username" mapstructure:"username"`                       //商户号              //客户真实姓名，非必填
+	Amount             string `json:"amount" mapstructure:"amount"`                           //金额（小数点后取2位）
+	OrderNumber        string `json:"order_number" mapstructure:"order_number"`               //商户订单号            //唯一订单号
+	SystemOrderNumber  string `json:"system_order_number" mapstructure:"system_order_number"` //平台订单号
+	NotifyUrl          string `json:"notify_url" mapstructure:"notify_url"`                   //异步通知地址
+	ReturnUrl          string `json:"return_url" mapstructure:"return_url"`                   //跳转URL
+	CreatedAt          string `json:"created_at" mapstructure:"created_at"`                   //建立时间
+	ConfirmedAt        string `json:"confirmed_at" mapstructure:"confirmed_at"`               //成功时间
+	Status             int32  `json:"status" mapstructure:"status"`                           //订单状态：1、2、3、7、11 处理中 | 4、5 成功 | 6、8 失败
+	Sign               string `json:"sign" mapstructure:"sign"`                               //签名
+	CasherUrl          string `json:"casher_url" mapstructure:"casher_url"`                   //以下特定通道才有
+	QrcodeUrl          string `json:"qrcode_url" mapstructure:"qrcode_url"`
+	SchemeUrl          string `json:"scheme_url" mapstructure:"scheme_url"`
+	ReceiverAccount    string `json:"receiver_account" mapstructure:"receiver_account"`
+	ReceiverBankName   string `json:"receiver_bank_name" mapstructure:"receiver_bank_name"`
+	ReceiverBankBranch string `json:"receiver_bank_branch" mapstructure:"receiver_bank_branch"`
+	ReceiverName       string `json:"receiver_name" mapstructure:"receiver_name"`
 	Note               string `json:"note" mapstructure:"note"`
 }
 

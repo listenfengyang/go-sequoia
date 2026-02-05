@@ -27,7 +27,7 @@ func TestDeposit(t *testing.T) {
 func GenDepositRequestDemo() NePayDepositReq {
 	return NePayDepositReq{
 		Amount:      "1200.00",
-		OrderNumber: "202602058352366722",
+		OrderNumber: "202602058352366725",
 		RealName:    "张三",
 		ClientIp:    "127.0.0.1",
 	}
