@@ -27,7 +27,7 @@ func TestWithdraw(t *testing.T) {
 func GenWithdrawRequestDemo() NePayWithdrawReq {
 	return NePayWithdrawReq{
 		Amount:             "1000.00",
-		OrderNumber:        "2026020518462935",
+		OrderNumber:        "20260205184629351",
 		BankCardHolderName: "张三",
 		BankCardNumber:     "6217001234567890123",
 		BankName:           "中国建设银行",

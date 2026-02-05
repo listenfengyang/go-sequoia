@@ -32,9 +32,9 @@ type NePayDepositReq struct {
 }
 
 type NePayDepositRsp struct {
-	HttpStatusCode int         `json:"httpStatusCode" mapstructure:"httpStatusCode"`
+	HttpStatusCode int         `json:"http_status_code" mapstructure:"http_status_code"`
 	Message        string      `json:"message" mapstructure:"message"`
-	ErrorCode      string      `json:"errorCode" mapstructure:"errorCode"`
+	ErrorCode      int32       `json:"error_code" mapstructure:"error_code"`
 	Data           DepositData `json:"data" mapstructure:"data"`
 }
 
@@ -74,9 +74,9 @@ type NePayWithdrawReq struct {
 }
 
 type NePayWithdrawRsp struct {
-	HttpStatusCode int          `json:"httpStatusCode" mapstructure:"httpStatusCode"`
+	HttpStatusCode int          `json:"http_status_code" mapstructure:"http_status_code"`
 	Message        string       `json:"message" mapstructure:"message"`
-	ErrorCode      string       `json:"errorCode" mapstructure:"errorCode"`
+	ErrorCode      int32        `json:"error_code" mapstructure:"error_code"`
 	Data           WithdrawData `json:"data" mapstructure:"data"`
 }
 
