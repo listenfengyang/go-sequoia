@@ -16,7 +16,7 @@ func (cli *Client) Deposit(req NePayDepositReq) (*NePayDepositRsp, error) {
 
 	var params map[string]string
 	mapstructure.Decode(req, &params)
-	if cli.Params.MerchantInfo.UserName == "CPT01" {
+	if cli.Params.MerchantInfo.UserName == "CPT01" || cli.Params.MerchantInfo.UserName == "VAHA01" {
 		params["channel_code"] = "QR_ALIPAY"
 	} else {
 		params["channel_code"] = "BANK_CARD"
