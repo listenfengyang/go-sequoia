@@ -1,25 +1,19 @@
-package go_nepay
+package go_sequoia
 
 import (
-	"encoding/json"
 	"errors"
 
-	"github.com/listenfengyang/go-nepay/utils"
-	"github.com/mitchellh/mapstructure"
+	"github.com/listenfengyang/go-sequoia/utils"
 )
 
 // 出金-成功回调
-func (cli *Client) WithdrawCallback(req NePayCallbackReq, processor func(req NePayCallbackReq) error) error {
-	//验证签名
-	var params map[string]interface{}
-	mapstructure.Decode(req.Data, &params)
+func (cli *Client) WithdrawCallback(sign string, payload string, req SequoiaWithdrawCallbackReq, processor func(req SequoiaWithdrawCallbackReq) error) error {
 
 	// Verify signature
-	flag := utils.VerifyCallback(params, cli.Params.AccessKey)
+	flag := utils.VerifyCallback(sign, payload, cli.Params.MerchantInfo.WebhookSecretTJS)
 	if !flag {
 		//签名校验失败
-		reqJson, _ := json.Marshal(req)
-		cli.logger.Errorf("nepay withdraw back verify fail, req: %s", string(reqJson))
+		cli.logger.Errorf("sequoia withdraw back verify fail, req: %s", payload)
 		return errors.New("sign verify error")
 	}
 

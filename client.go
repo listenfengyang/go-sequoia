@@ -1,19 +1,19 @@
-package go_nepay
+package go_sequoia
 
 import (
 	"github.com/go-resty/resty/v2"
-	"github.com/listenfengyang/go-nepay/utils"
+	"github.com/listenfengyang/go-sequoia/utils"
 )
 
 type Client struct {
-	Params *NePayInitParams
+	Params *SequoiaInitParams
 
 	ryClient  *resty.Client
 	debugMode bool //是否调试模式
 	logger    utils.Logger
 }
 
-func NewClient(logger utils.Logger, params *NePayInitParams) *Client {
+func NewClient(logger utils.Logger, params *SequoiaInitParams) *Client {
 	return &Client{
 		Params: params,
 

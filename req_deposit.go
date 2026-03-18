@@ -1,36 +1,50 @@
-package go_nepay
+package go_sequoia
 
 import (
 	"crypto/tls"
 	"fmt"
 
 	jsoniter "github.com/json-iterator/go"
-	"github.com/listenfengyang/go-nepay/utils"
+	"github.com/listenfengyang/go-sequoia/utils"
 	"github.com/mitchellh/mapstructure"
 )
 
 // 下单
-func (cli *Client) Deposit(req NePayDepositReq) (*NePayDepositRsp, error) {
+func (cli *Client) Deposit(req SequoiaDepositReq) (*SequoiaDepositRsp, error) {
 
 	rawURL := cli.Params.DepositUrl
 
 	var params map[string]string
 	mapstructure.Decode(req, &params)
-	if cli.Params.MerchantInfo.UserName == "CPT01" || cli.Params.MerchantInfo.UserName == "VAHA01" {
-		params["channel_code"] = "QR_ALIPAY"
-	} else {
-		params["channel_code"] = "BANK_CARD"
+	params["callback_url"] = cli.Params.DepositNotifyUrl
+	params["back_to_merchant_success_url"] = cli.Params.ReturnUrl
+	params["back_to_merchant_url"] = cli.Params.ReturnUrl
+
+	if req.Currency == "TJS" {
+		delete(params, "card_number")
+	} else if req.Currency != "KZT" {
+		delete(params, "send_name")
+		delete(params, "email")
+	} else if req.Currency == "UZS" || req.Currency == "KGS" {
+		delete(params, "wallet_provider")
 	}
-	params["username"] = cli.Params.MerchantInfo.UserName
-	params["notify_url"] = cli.Params.NotifyUrl
-	params["return_url"] = cli.Params.ReturnUrl
 
 	// Generate signature
-	signStr, _ := utils.Sign(params, cli.Params.AccessKey)
-	params["sign"] = signStr
-	// params["sign"] = "b920c43e6f8411045152532fe29371ff" //signStr
+	key, err := GetSecretKey(req.Currency, *cli.Params)
+	if err != nil {
+		return nil, err
+	}
+	merchantId, err := GetMerchantId(req.Currency, *cli.Params)
+	if err != nil {
+		return nil, err
+	}
+	params["merchant_id"] = merchantId
+
+	signStr, _ := utils.Sign(params, key)
+	params["token"] = signStr
 	fmt.Println(params)
-	var result NePayDepositRsp
+
+	var result SequoiaDepositRsp
 
 	resp2, err := cli.ryClient.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true}).
 		SetCloseConnection(true).
@@ -44,7 +58,7 @@ func (cli *Client) Deposit(req NePayDepositReq) (*NePayDepositRsp, error) {
 		Post(rawURL)
 
 	restLog, _ := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(utils.GetRestyLog(resp2))
-	cli.logger.Infof("PSPResty#nepay#deposit->%s", string(restLog))
+	cli.logger.Infof("PSPResty#sequoia#deposit->%s", string(restLog))
 
 	if err != nil {
 		return nil, err

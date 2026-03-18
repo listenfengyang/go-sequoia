@@ -1,29 +1,46 @@
-package go_nepay
+package go_sequoia
 
 import (
 	"crypto/tls"
 	"fmt"
 
 	jsoniter "github.com/json-iterator/go"
-	"github.com/listenfengyang/go-nepay/utils"
+	"github.com/listenfengyang/go-sequoia/utils"
 	"github.com/mitchellh/mapstructure"
 )
 
-func (cli *Client) WithdrawReq(req NePayWithdrawReq) (*NePayWithdrawRsp, error) {
+func (cli *Client) WithdrawReq(req SequoiaWithdrawReq) (*SequoiaWithdrawRsp, error) {
 
-	rawURL := cli.Params.WithdrawUrl
-	// 2. Convert struct to map for signing
 	var params map[string]string
 	mapstructure.Decode(req, &params)
-	params["notify_url"] = cli.Params.WithdrawNotifyUrl
-	params["username"] = cli.Params.MerchantInfo.UserName
+	params["callback_url"] = cli.Params.WithdrawNotifyUrl
+
+	if req.Currency != "KZT" {
+		delete(params, "wallet_provider")
+		if req.Currency != "UZS" && req.Currency != "TJS" {
+			delete(params, "pay_out_method")
+		}
+	} else if req.Currency == "KZT" {
+		delete(params, "pay_out_method")
+	}
+
+	merchantId, err := GetMerchantId(req.Currency, *cli.Params)
+	if err != nil {
+		return nil, err
+	}
+	params["merchant_id"] = merchantId
 
 	// Generate signature
-	signStr, _ := utils.Sign(params, cli.Params.AccessKey)
-	params["sign"] = signStr
-	var result NePayWithdrawRsp
+	key, err := GetSecretKey(req.Currency, *cli.Params)
+	if err != nil {
+		return nil, err
+	}
+	signStr, _ := utils.Sign(params, key)
+	params["token"] = signStr
+	var result SequoiaWithdrawRsp
 	fmt.Println(params)
 
+	rawURL := cli.Params.WithdrawUrl
 	resp2, err := cli.ryClient.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true}).
 		SetCloseConnection(true).
 		R().
@@ -35,7 +52,7 @@ func (cli *Client) WithdrawReq(req NePayWithdrawReq) (*NePayWithdrawRsp, error) 
 		Post(rawURL)
 
 	restLog, _ := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(utils.GetRestyLog(resp2))
-	cli.logger.Infof("PSPResty#nepay#withdraw->%s", string(restLog))
+	cli.logger.Infof("PSPResty#sequoia#withdraw->%s", string(restLog))
 
 	if err != nil {
 		return nil, err

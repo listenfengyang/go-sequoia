@@ -1,4 +1,4 @@
-package go_nepay
+package go_sequoia
 
 import (
 	"fmt"
@@ -24,15 +24,20 @@ func (l VLog) Errorf(format string, args ...interface{}) {
 func TestCallback(t *testing.T) {
 	vLog := VLog{}
 	//构造client
-	cli := NewClient(vLog, &NePayInitParams{
-		MerchantInfo:      MerchantInfo{MERCHANT_ID, ACCESS_KEY},
-		DepositUrl:        DEPOSIT_URL,
-		WithdrawUrl:       WITHDRAW_URL,
-		NotifyUrl:         NOTIFY_URL,
-		WithdrawNotifyUrl: WITHDRAW_NOTIFY_URL,
+	cli := NewClient(vLog, &SequoiaInitParams{
+		MerchantInfo: MerchantInfo{
+			MerchantIdTJS:    MERCHANT_ID_TJS,
+			SecretKeyTJS:     SECRET_KEY_TJS,
+			WebhookSecretTJS: WEBHOOK_SECRET_TJS,
+		},
+		DepositUrl:       DEPOSIT_URL,
+		WithdrawUrl:      WITHDRAW_URL,
+		DepositNotifyUrl: DEPOSIT_NOTIFY_URL,
 	})
 
-	err := cli.DepositCallback(GenCallbackRequestDemo(), func(NePayCallbackReq) error { return nil })
+	headerSign := "aa4d0328b880f641a41a3b5736bf4cb468bac2a07bd2a5a3431839d5941a4664"
+
+	err := cli.DepositCallback(headerSign, GenCallbackRequestDemo(), func(SequoiaDepositCallbackReq) error { return nil })
 	if err != nil {
 		cli.logger.Errorf("Error:%s", err.Error())
 		return
@@ -40,18 +45,15 @@ func TestCallback(t *testing.T) {
 	cli.logger.Infof("resp:%+v\n", err)
 }
 
-func GenCallbackRequestDemo() NePayCallbackReq {
-	return NePayCallbackReq{
-		Data: CallbackData{
-			OrderNumber:       "20260205835236672",
-			SystemOrderNumber: "GX20260205085851633762",
-			UserName:          "CPT02",
-			Amount:            "1100.00",
-			Status:            5,
-			Sign:              "e73afcb8e47df8dcebec0239bd667b51",
-		},
-		HttpStatusCode: 200,
-		ErrorCode:      0,
-		Message:        "u5f02u6b65u56deu8c03",
+func GenCallbackRequestDemo() SequoiaDepositCallbackReq {
+	return SequoiaDepositCallbackReq{
+		OrderId:        "2026023532263465",
+		Date:           "13.03.2026 08:05",
+		Amount:         "300",
+		PaymentType:    1,
+		Status:         "success",
+		Currency:       "TJS",
+		ShowIntruction: nil,
+		IsRepayment:    false,
 	}
 }

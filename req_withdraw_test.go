@@ -1,4 +1,4 @@
-package go_nepay
+package go_sequoia
 
 import (
 	"testing"
@@ -7,14 +7,17 @@ import (
 func TestWithdraw(t *testing.T) {
 	vLog := VLog{}
 	//构造client
-	cli := NewClient(vLog, &NePayInitParams{
-		MerchantInfo:      MerchantInfo{MERCHANT_ID, ACCESS_KEY},
-		DepositUrl:        DEPOSIT_URL,
+	cli := NewClient(vLog, &SequoiaInitParams{
+		MerchantInfo: MerchantInfo{
+			MerchantIdTJS: MERCHANT_ID_TJS, SecretKeyTJS: SECRET_KEY_TJS,
+			MerchantIdUZS: MERCHANT_ID_UZS, SecretKeyUZS: SECRET_KEY_UZS,
+			MerchantIdKGS: MERCHANT_ID_KGS, SecretKeyKGS: SECRET_KEY_KGS,
+			MerchantIdAZN: MERCHANT_ID_AZN, SecretKeyAZN: SECRET_KEY_AZN,
+			MerchantIdKZT: MERCHANT_ID_KZT, SecretKeyKZT: SECRET_KEY_KZT,
+		},
 		WithdrawUrl:       WITHDRAW_URL,
-		NotifyUrl:         NOTIFY_URL,
 		WithdrawNotifyUrl: WITHDRAW_NOTIFY_URL,
 	})
-
 	//发请求
 	resp, err := cli.WithdrawReq(GenWithdrawRequestDemo())
 	if err != nil {
@@ -24,12 +27,15 @@ func TestWithdraw(t *testing.T) {
 	cli.logger.Infof("resp:%+v\n", resp)
 }
 
-func GenWithdrawRequestDemo() NePayWithdrawReq {
-	return NePayWithdrawReq{
-		Amount:             "1000.00",
-		OrderNumber:        "20260205184629352",
-		BankCardHolderName: "张三",
-		BankCardNumber:     "6217001234567890123",
-		BankName:           "中国建设银行",
+// TJS, UZS, KGS, AZN, KZT
+func GenWithdrawRequestDemo() SequoiaWithdrawReq {
+	return SequoiaWithdrawReq{
+		Id:             "202602351322634130",
+		Date:           "2020-06-29 21:10:36",
+		CardNumber:     "2345678901234567",
+		Amount:         "100",
+		Currency:       "TJS",
+		WalletProvider: "DUSHANBE_CITY",
+		PayOutMethod:   "DUSHANBE_CITY",
 	}
 }

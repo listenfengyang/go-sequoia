@@ -1,114 +1,132 @@
-package go_nepay
+package go_sequoia
 
-type NePayInitParams struct {
+type SequoiaInitParams struct {
 	MerchantInfo `yaml:",inline" mapstructure:",squash"`
 
-	ChannelCode       string `json:"channelCode" mapstructure:"channelCode" config:"channelCode"  yaml:"channelCode"` // 渠道码 固定的
-	NotifyUrl         string `json:"notifyUrl" mapstructure:"notifyUrl" config:"notifyUrl"  yaml:"notifyUrl"`         // 通知地址
-	ReturnUrl         string `json:"returnUrl" mapstructure:"returnUrl" config:"returnUrl"  yaml:"returnUrl"`         // 回调地址
 	DepositUrl        string `json:"depositUrl" mapstructure:"depositUrl" config:"depositUrl"  yaml:"depositUrl"`
 	WithdrawUrl       string `json:"withdrawUrl" mapstructure:"withdrawUrl" config:"withdrawUrl"  yaml:"withdrawUrl"`
-	WithdrawNotifyUrl string `json:"withdrawNotifyUrl" mapstructure:"withdrawNotifyUrl" config:"withdrawNotifyUrl"  yaml:"withdrawNotifyUrl"`
+	DepositNotifyUrl  string `json:"depositNotifyUrl" mapstructure:"depositNotifyUrl" config:"depositNotifyUrl"  yaml:"depositNotifyUrl"`     // 回调地址
+	WithdrawNotifyUrl string `json:"withdrawNotifyUrl" mapstructure:"withdrawNotifyUrl" config:"withdrawNotifyUrl"  yaml:"withdrawNotifyUrl"` // 回调地址
+	ReturnUrl         string `json:"returnUrl" mapstructure:"returnUrl" config:"returnUrl"  yaml:"returnUrl"`                                 // 回调地址
 }
 
 type MerchantInfo struct {
-	UserName  string `json:"username" mapstructure:"username" config:"username"  yaml:"username"`     // 商户号
-	AccessKey string `json:"accessKey" mapstructure:"accessKey" config:"accessKey"  yaml:"accessKey"` // accessKey
+	MerchantIdTJS    string `json:"merchantIdTJS" mapstructure:"merchantIdTJS" config:"merchantIdTJS"  yaml:"merchantIdTJS"`             // 商户id
+	MerchantIdKGS    string `json:"merchantIdKGS" mapstructure:"merchantIdKGS" config:"merchantIdKGS"  yaml:"merchantIdKGS"`             // 商户id
+	MerchantIdUZS    string `json:"merchantIdUZS" mapstructure:"merchantIdUZS" config:"merchantIdUZS"  yaml:"merchantIdUZS"`             // 商户id
+	MerchantIdKZT    string `json:"merchantIdKZT" mapstructure:"merchantIdKZT" config:"merchantIdKZT"  yaml:"merchantIdKZT"`             // 商户id
+	MerchantIdAZN    string `json:"merchantIdAZN" mapstructure:"merchantIdAZN" config:"merchantIdAZN"  yaml:"merchantIdAZN"`             // 商户id
+	SecretKeyTJS     string `json:"secretKeyTJS" mapstructure:"secretKeyTJS" config:"secretKeyTJS"  yaml:"secretKeyTJS"`                 // 商户密钥
+	SecretKeyKGS     string `json:"secretKeyKGS" mapstructure:"secretKeyKGS" config:"secretKeyKGS"  yaml:"secretKeyKGS"`                 // 商户密钥
+	SecretKeyUZS     string `json:"secretKeyUZS" mapstructure:"secretKeyUZS" config:"secretKeyUZS"  yaml:"secretKeyUZS"`                 // 商户密钥
+	SecretKeyKZT     string `json:"secretKeyKZT" mapstructure:"secretKeyKZT" config:"secretKeyKZT"  yaml:"secretKeyKZT"`                 // 商户密钥
+	SecretKeyAZN     string `json:"secretKeyAZN" mapstructure:"secretKeyAZN" config:"secretKeyAZN"  yaml:"secretKeyAZN"`                 // 商户密钥
+	WebhookSecretTJS string `json:"webhookSecretTJS" mapstructure:"webhookSecretTJS" config:"webhookSecretTJS"  yaml:"webhookSecretTJS"` // 商户密钥
+	WebhookSecretKGS string `json:"webhookSecretKGS" mapstructure:"webhookSecretKGS" config:"webhookSecretKGS"  yaml:"webhookSecretKGS"` // 商户密钥
+	WebhookSecretUZS string `json:"webhookSecretUZS" mapstructure:"webhookSecretUZS" config:"webhookSecretUZS"  yaml:"webhookSecretUZS"` // 商户密钥
+	WebhookSecretKZT string `json:"webhookSecretKZT" mapstructure:"webhookSecretKZT" config:"webhookSecretKZT"  yaml:"webhookSecretKZT"` // 商户密钥
+	WebhookSecretAZN string `json:"webhookSecretAZN" mapstructure:"webhookSecretAZN" config:"webhookSecretAZN"  yaml:"webhookSecretAZN"` // 商户密钥
 }
 
 //============================================================
 
-// nepay入金
-type NePayDepositReq struct {
-	ChannelCode string `json:"channelCode" form:"channelCode" mapstructure:"channel_code"` // 渠道码 固定的
-	UserName    string `json:"username" form:"username" mapstructure:"username"`           //商户orderNo
-	Amount      string `json:"amount" form:"amount" mapstructure:"amount"`                 //订单金额
-	OrderNumber string `json:"orderNumber" form:"orderNumber" mapstructure:"order_number"` //唯一订单号
-	RealName    string `json:"realName" form:"realName" mapstructure:"real_name"`          //客户真实姓名，非必填
-	ClientIp    string `json:"clientIp" form:"clientIp" mapstructure:"client_ip"`          //客户IP地址
+// Sequoia入金
+type SequoiaDepositReq struct {
+	OrderId                  string `json:"order_id" mapstructure:"order_id" config:"order_id"  yaml:"order_id"`                                                                                 // 订单号
+	Amount                   string `json:"amount" mapstructure:"amount" config:"amount"  yaml:"amount"`                                                                                         // 金额
+	Token                    string `json:"token" mapstructure:"token" config:"token"  yaml:"token"`                                                                                             // 令牌
+	PaymentMethod            string `json:"payment_method" mapstructure:"payment_method" config:"payment_method"  yaml:"payment_method"`                                                         // 支付方式
+	Currency                 string `json:"currency" mapstructure:"currency" config:"currency"  yaml:"currency"`                                                                                 // 币种
+	BackToMerchantSuccessUrl string `json:"back_to_merchant_success_url" mapstructure:"back_to_merchant_success_url" config:"back_to_merchant_success_url"  yaml:"back_to_merchant_success_url"` // 回调地址
+	BackToMerchantUrl        string `json:"back_to_merchant_url" mapstructure:"back_to_merchant_url" config:"back_to_merchant_url"  yaml:"back_to_merchant_url"`                                 // 回调地址
+	MerchantUserId           string `json:"merchant_user_id" mapstructure:"merchant_user_id" config:"merchant_user_id"  yaml:"merchant_user_id"`                                                 // 商户用户id
+	MerchantUserIp           string `json:"merchant_user_ip" mapstructure:"merchant_user_ip" config:"merchant_user_ip"  yaml:"merchant_user_ip"`                                                 // 商户用户ip
+	Date                     string `json:"date" mapstructure:"date" config:"date"  yaml:"date"`                                                                                                 // 日期
+	WalletProvider           string `json:"wallet_provider" mapstructure:"wallet_provider" config:"wallet_provider"  yaml:"wallet_provider"`
+	CardNumber               string `json:"card_number" mapstructure:"card_number" config:"card_number"  yaml:"card_number"`
+	SenderName               string `json:"sender_name" mapstructure:"sender_name" config:"sender_name"  yaml:"sender_name"`
+	Email                    string `json:"email" mapstructure:"email" config:"email"  yaml:"email"`
 
-	//这个不需要业务侧使用,而是sdk帮计算和补充
-	//Sign        string `json:"sign" mapstructure:"sign"`               //签名
+	// MerchantId               string  `json:"merchantId" mapstructure:"merchantId" config:"merchantId"  yaml:"merchantId"`                                                         // 商户id
+	// CallbackUrl string `json:"callback_url" mapstructure:"callback_url" config:"callback_url"  yaml:"callback_url"` // 回调地址
 }
 
-type NePayDepositRsp struct {
-	HttpStatusCode int         `json:"http_status_code" mapstructure:"http_status_code"`
-	Message        string      `json:"message" mapstructure:"message"`
-	ErrorCode      int32       `json:"error_code" mapstructure:"error_code"`
-	Data           DepositData `json:"data" mapstructure:"data"`
+type SequoiaDepositRsp struct {
+	Status  string         `json:"status" mapstructure:"status"`
+	Message string         `json:"message" mapstructure:"message"`
+	Code    string         `json:"code" mapstructure:"code"`
+	Data    DepositRspData `json:"data" mapstructure:"data"`
 }
 
-type DepositData struct {
-	UserName           string `json:"username" mapstructure:"username"`                       //商户号              //客户真实姓名，非必填
-	Amount             string `json:"amount" mapstructure:"amount"`                           //金额（小数点后取2位）
-	OrderNumber        string `json:"order_number" mapstructure:"order_number"`               //商户订单号            //唯一订单号
-	SystemOrderNumber  string `json:"system_order_number" mapstructure:"system_order_number"` //平台订单号
-	NotifyUrl          string `json:"notify_url" mapstructure:"notify_url"`                   //异步通知地址
-	ReturnUrl          string `json:"return_url" mapstructure:"return_url"`                   //跳转URL
-	CreatedAt          string `json:"created_at" mapstructure:"created_at"`                   //建立时间
-	ConfirmedAt        string `json:"confirmed_at" mapstructure:"confirmed_at"`               //成功时间
-	Status             int32  `json:"status" mapstructure:"status"`                           //订单状态：1、2、3、7、11 处理中 | 4、5 成功 | 6、8 失败
-	Sign               string `json:"sign" mapstructure:"sign"`                               //签名
-	CasherUrl          string `json:"casher_url" mapstructure:"casher_url"`                   //以下特定通道才有
-	QrcodeUrl          string `json:"qrcode_url" mapstructure:"qrcode_url"`
-	SchemeUrl          string `json:"scheme_url" mapstructure:"scheme_url"`
-	ReceiverAccount    string `json:"receiver_account" mapstructure:"receiver_account"`
-	ReceiverBankName   string `json:"receiver_bank_name" mapstructure:"receiver_bank_name"`
-	ReceiverBankBranch string `json:"receiver_bank_branch" mapstructure:"receiver_bank_branch"`
-	ReceiverName       string `json:"receiver_name" mapstructure:"receiver_name"`
-	Note               string `json:"note" mapstructure:"note"`
+type DepositRspData struct {
+	RedirectUrl string `json:"redirect_url" mapstructure:"redirect_url"` // 重定向url
 }
 
-// nepay出金
-type NePayWithdrawReq struct {
-	Amount             string `json:"amount" mapstructure:"amount"`                               //金额（小数点后取2位）
-	OrderNumber        string `json:"order_number" mapstructure:"order_number"`                   //商户订单号            //唯一订单号
-	BankCardHolderName string `json:"bank_card_holder_name" mapstructure:"bank_card_holder_name"` //银行账户名
-	BankCardNumber     string `json:"bank_card_number" mapstructure:"bank_card_number"`           //银行账户号
-	BankName           string `json:"bank_name" mapstructure:"bank_name"`                         //银行名称
-	// BankProvince       string `json:"bank_province" mapstructure:"bank_province"`                 //银行省份，非必填
-	// BankCity           string `json:"bank_city" mapstructure:"bank_city"`                         //银行城市，非必填
-	// UserName           string `json:"username" mapstructure:"username"`                           //商户号
-	// Sign string `json:"sign" mapstructure:"sign"` //签名NotifyUrl          string `json:"notify_url" mapstructure:"notify_url"`                       //异步通知地址
-	// NotifyUrl          string `json:"notify_url" mapstructure:"notify_url"`                       //异步通知地址
+// Sequoia出金
+type SequoiaWithdrawReq struct {
+	Id             string `json:"id" mapstructure:"id"`                           // 出金订单id
+	Date           string `json:"date" mapstructure:"date"`                       // 日期
+	CardNumber     string `json:"card_number" mapstructure:"card_number"`         // 银行账户号
+	Amount         string `json:"amount" mapstructure:"amount"`                   // 金额
+	Currency       string `json:"currency" mapstructure:"currency"`               // 币种
+	CallbackUrl    string `json:"callback_url" mapstructure:"callback_url"`       // 回调地址
+	WalletProvider string `json:"wallet_provider" mapstructure:"wallet_provider"` // 钱包供应商
+	MerchantId     string `json:"merchant_id" mapstructure:"merchant_id"`         // 商户id
+	Token          string `json:"token" mapstructure:"token"`                     // 令牌
+	PayOutMethod   string `json:"pay_out_method" mapstructure:"pay_out_method"`   // 出金方式
 }
 
-type NePayWithdrawRsp struct {
-	HttpStatusCode int          `json:"http_status_code" mapstructure:"http_status_code"`
-	Message        string       `json:"message" mapstructure:"message"`
-	ErrorCode      int32        `json:"error_code" mapstructure:"error_code"`
-	Data           WithdrawData `json:"data" mapstructure:"data"`
+type SequoiaWithdrawRsp struct {
+	Status  string       `json:"status" mapstructure:"status"`
+	Message string       `json:"message" mapstructure:"message"`
+	Code    string       `json:"code" mapstructure:"code"`
+	Data    WithdrawData `json:"data" mapstructure:"data"`
 }
 
 type WithdrawData struct {
-	UserName           string `json:"username" mapstructure:"username"`                           //商户号
-	Amount             string `json:"amount" mapstructure:"amount"`                               //金额（小数点后取2位）
-	OrderNumber        string `json:"order_number" mapstructure:"order_number"`                   //商户订单号            //唯一订单号
-	SystemOrderNumber  string `json:"system_order_number" mapstructure:"system_order_number"`     //平台订单号
-	NotifyUrl          string `json:"notify_url" mapstructure:"notify_url"`                       //异步通知地址
-	CreatedAt          string `json:"created_at" mapstructure:"created_at"`                       //建立时间
-	ConfirmedAt        string `json:"confirmed_at" mapstructure:"confirmed_at"`                   //成功时间
-	BankCardHolderName string `json:"bank_card_holder_name" mapstructure:"bank_card_holder_name"` //银行账户名
-	BankCardNumber     string `json:"bank_card_number" mapstructure:"bank_card_number"`           //银行账户号
-	BankName           string `json:"bank_name" mapstructure:"bank_name"`                         //银行名称
-	BankProvince       string `json:"bank_province" mapstructure:"bank_province"`                 //银行省份，非必填
-	BankCity           string `json:"bank_city" mapstructure:"bank_city"`                         //银行城市，非必填
-	Sign               string `json:"sign" mapstructure:"sign"`                                   //签名
+	InternalId int64 `json:"internal_id" mapstructure:"internal_id"` // 内部订单号
 }
 
-// 入金&出金回调
-type NePayCallbackReq struct {
-	HttpStatusCode int          `json:"httpStatusCode" form:"httpStatusCode" mapstructure:"httpStatusCode"`
-	Message        string       `json:"message" form:"message" mapstructure:"message"`
-	ErrorCode      int64        `json:"errorCode" form:"errorCode" mapstructure:"errorCode"`
-	Data           CallbackData `json:"data" form:"data" mapstructure:"data"`
+// 入金回调
+type SequoiaDepositCallbackReq struct {
+	OrderId        string `json:"order_id" form:"order_id" mapstructure:"order_id"`                         // 订单号
+	Date           string `json:"date" form:"date" mapstructure:"date"`                                     // 日期
+	Amount         string `json:"amount" form:"amount" mapstructure:"amount"`                               // 金额（字符串形式，例如"300"）
+	PaymentType    int32  `json:"payment_type" form:"payment_type" mapstructure:"payment_type"`             // 支付方式
+	Status         string `json:"status" form:"status" mapstructure:"status"`                               // 订单状态：success, expired
+	Currency       string `json:"currency" form:"currency" mapstructure:"currency"`                         // 币种
+	ShowIntruction *bool  `json:"show_instruction" form:"show_instruction" mapstructure:"show_instruction"` // 是否展示_instructions，允许为 null
+	IsRepayment    bool   `json:"is_repayment" form:"is_repayment" mapstructure:"is_repayment"`             // 是否为还款
 }
 
-type CallbackData struct {
-	UserName          string `json:"username" form:"username" mapstructure:"username"`                                  //商户号
-	Amount            string `json:"amount" form:"amount" mapstructure:"amount"`                                        //金额（小数点后取2位）
-	OrderNumber       string `json:"order_number" form:"order_number" mapstructure:"order_number"`                      //商户订单号            //唯一订单号
-	SystemOrderNumber string `json:"system_order_number" form:"system_order_number" mapstructure:"system_order_number"` //平台订单号
-	Status            int32  `json:"status" form:"status" mapstructure:"status"`                                        //订单状态：1、2、3、7、11 处理中 | 4、5 成功 | 6、8 失败
-	Sign              string `json:"sign" form:"sign" mapstructure:"sign"`                                              //签名
+type DepositCallbackData struct {
+	Amount         string `json:"amount" form:"amount" mapstructure:"amount"`                               // 金额（字符串形式，例如"300"）
+	CardNumber     string `json:"card_number" form:"card_number" mapstructure:"card_number"`                // 银行账户号
+	Currency       string `json:"currency" form:"currency" mapstructure:"currency"`                         // 币种
+	Date           string `json:"date" form:"date" mapstructure:"date"`                                     // 日期
+	OrderId        string `json:"order_id" form:"order_id" mapstructure:"order_id"`                         // 订单号
+	PaymentType    int32  `json:"payment_type" form:"payment_type" mapstructure:"payment_type"`             // 支付方式
+	Status         string `json:"status" form:"status" mapstructure:"status"`                               // 订单状态：success, expired
+	ShowIntruction *bool  `json:"show_instruction" form:"show_instruction" mapstructure:"show_instruction"` // 是否展示_instructions，允许为 null
+	// success callback with changed sum 独有的参数 =》新金额（字符串形式）
+	NewAmount string `json:"new_amount" form:"new_amount" mapstructure:"new_amount"`
+}
+
+// 出金回调
+type SequoiaWithdrawCallbackReq struct {
+	Amount     float64 `json:"amount" form:"amount" mapstructure:"amount"`                // 金额（小数点后取2位）
+	CardNumber string  `json:"card_number" form:"card_number" mapstructure:"card_number"` // 银行账户号
+	Currency   string  `json:"currency" form:"currency" mapstructure:"currency"`          // 币种
+	Date       string  `json:"date" form:"date" mapstructure:"date"`                      // 日期
+	Id         string  `json:"id" form:"id" mapstructure:"id"`                            // 出金订单id
+	Status     string  `json:"status" form:"status" mapstructure:"status"`                // 订单状态：success, fail, pending
+}
+
+type WithdrawCallbackData struct {
+	Amount     float64 `json:"amount" form:"amount" mapstructure:"amount"`                // 金额（小数点后取2位）
+	CardNumber string  `json:"card_number" form:"card_number" mapstructure:"card_number"` // 银行账户号
+	Currency   string  `json:"currency" form:"currency" mapstructure:"currency"`          // 币种
+	Date       string  `json:"date" form:"date" mapstructure:"date"`                      // 日期
+	Id         string  `json:"id" form:"id" mapstructure:"id"`                            // 出金订单id
+	Status     string  `json:"status" form:"status" mapstructure:"status"`                // 订单状态：success, fail, pending
 }

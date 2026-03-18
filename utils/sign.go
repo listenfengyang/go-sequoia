@@ -1,59 +1,32 @@
 package utils
 
 import (
+	"crypto/hmac"
 	"crypto/md5"
+	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
-	"net/url"
-	"sort"
-	"strings"
-
-	"github.com/samber/lo"
-	"github.com/spf13/cast"
 )
 
 func Sign(params map[string]string, key string) (string, error) {
-	// 1. 依照 ASCII 顺序由小到大做排序
-	//  key1=value1&key2=value2...的方式组出字串，最后再加上&secret_key={密钥}
-	keys := lo.Keys(params)
-	sort.Strings(keys)
-
-	var sb strings.Builder
-	for _, k := range keys {
-		value := cast.ToString(params[k])
-		if k != "sign" && value != "" { // && value != ""
-			//只有非空才可以参与签名
-			sb.WriteString(fmt.Sprintf("%s=%s&", k, url.QueryEscape(value)))
-		}
-	}
-	signStr := sb.String()
-	signStr += fmt.Sprintf("secret_key=%s", key)
-	signStr, err := url.QueryUnescape(signStr)
-	if err != nil {
-		fmt.Println("QueryUnescape error:", err)
-		return "", err
+	var signStr string
+	if orderid, ok := params["order_id"]; ok {
+		signStr = fmt.Sprintf("%s%s", orderid, key)
+	} else if id, ok := params["id"]; ok {
+		signStr = fmt.Sprintf("%s%s", id, key)
 	}
 
 	fmt.Printf("[rawString]%s\n", signStr)
 
-	// 第2步骤产生签名字串做 md5 加签得到sign
 	hash := md5.Sum([]byte(signStr))
 	signResult := hex.EncodeToString(hash[:])
 
-	fmt.Printf("MD5签名str: %s\n\n", signResult)
+	fmt.Printf("[rawString]%s\n", signResult)
 	return signResult, nil
 }
 
-func Verify(params map[string]string, signKey string) (bool, error) {
-	// Check if signature exists in params
-	signature, exists := params["sign"]
-	if !exists {
-		return false, nil
-	}
-
-	// Remove signature from params for verification
-	delete(params, "sign")
-
+func Verify(signature string, params map[string]string, signKey string) (bool, error) {
 	// Generate current signature
 	currentSignature, err := Sign(params, signKey)
 	if err != nil {
@@ -65,30 +38,44 @@ func Verify(params map[string]string, signKey string) (bool, error) {
 }
 
 // 入金&出金回调-成功-验签
-func VerifyCallback(params map[string]interface{}, signKey string) bool {
-	// 1. 依照 ASCII 顺序由小到大做排序
-	//  key1=value1&key2=value2...的方式组出字串，最后再加上&secret_key={密钥}
-	keys := lo.Keys(params)
-	sort.Strings(keys)
-
-	var sb strings.Builder
-	for _, k := range keys {
-		value := cast.ToString(params[k])
-		if k != "sign" {
-			//只有非空才可以参与签名
-			sb.WriteString(fmt.Sprintf("%s=%s&", k, url.QueryEscape(value)))
-		}
+func VerifyCallback(sign, payloadJson, signKey string) bool {
+	fmt.Printf("payload json: %s\n", payloadJson)
+	mac := hmac.New(sha256.New, []byte(signKey))
+	if _, err := mac.Write([]byte(payloadJson)); err != nil {
+		return false
 	}
-	signStr := sb.String()
-	signStr += fmt.Sprintf("secret_key=%s", signKey)
 
-	fmt.Printf("[rawString]%s\n", signStr)
+	fmt.Printf("verify sign: %s\n", hex.EncodeToString(mac.Sum(nil)))
+	fmt.Printf("header sign: %s\n", sign)
+	return hex.EncodeToString(mac.Sum(nil)) == sign
+}
 
-	// 第2步骤产生签名字串做 md5 加签得到sign
-	hash := md5.Sum([]byte(signStr))
-	signResult := hex.EncodeToString(hash[:])
+func SignCallbackJSONRaw(payloadJson string, signKey string) (string, error) {
+	mac := hmac.New(sha256.New, []byte(signKey))
+	if _, err := mac.Write([]byte(payloadJson)); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(mac.Sum(nil)), nil
+}
 
-	fmt.Printf("MD5签名: %s\n\n", signResult)
-	fmt.Printf("回调sign值: %s\n\n", params["sign"])
-	return signResult == params["sign"]
+func VerifyCallbackJSON(payload interface{}, signature string, signKey string) bool {
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		fmt.Printf("[VerifyCallbackJSON json.Marshal error]%v\n", err)
+		return false
+	}
+
+	fmt.Printf("[payloadJson]%s\n", string(payloadBytes))
+
+	mac := hmac.New(sha256.New, []byte(signKey))
+	if _, err := mac.Write(payloadBytes); err != nil {
+		fmt.Printf("[VerifyCallbackJSON mac.Write error]%v\n", err)
+		return false
+	}
+	expected := hex.EncodeToString(mac.Sum(nil))
+
+	fmt.Printf("[expectedSignature]%s\n", expected)
+	fmt.Printf("[receivedSignature]%s\n", signature)
+
+	return hmac.Equal([]byte(expected), []byte(signature))
 }

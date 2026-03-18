@@ -1,4 +1,4 @@
-package go_nepay
+package go_sequoia
 
 import (
 	"testing"
@@ -7,33 +7,32 @@ import (
 func TestWithdrawCallback(t *testing.T) {
 	vLog := VLog{}
 	//构造client
-	cli := NewClient(vLog, &NePayInitParams{
-		MerchantInfo:      MerchantInfo{MERCHANT_ID, ACCESS_KEY},
-		DepositUrl:        DEPOSIT_URL,
+	cli := NewClient(vLog, &SequoiaInitParams{
+		MerchantInfo:      MerchantInfo{MerchantIdTJS: MERCHANT_ID_TJS, SecretKeyTJS: SECRET_KEY_TJS, WebhookSecretTJS: WEBHOOK_SECRET_TJS},
 		WithdrawUrl:       WITHDRAW_URL,
-		NotifyUrl:         NOTIFY_URL,
 		WithdrawNotifyUrl: WITHDRAW_NOTIFY_URL,
 	})
 
-	err := cli.WithdrawCallback(GenWdRequestDemo(), func(NePayCallbackReq) error { return nil })
+	headerSign := "6e68bfdcb2ba59443cc47f55da9424ea76d461764b9c5a087b74690acba6805c"
+
+	payloadJson, req := GenWdRequestDemo()
+
+	err := cli.WithdrawCallback(headerSign, payloadJson, req, func(req SequoiaWithdrawCallbackReq) error { return nil })
 	if err != nil {
 		cli.logger.Errorf("Error:%s", err.Error())
 		return
 	}
 }
 
-func GenWdRequestDemo() NePayCallbackReq {
-	return NePayCallbackReq{
-		Data: CallbackData{
-			OrderNumber:       "2026020518462935",
-			SystemOrderNumber: "GX20260205111915634496",
-			UserName:          "CPT02",
-			Amount:            "1000.00",
-			Status:            5,
-			Sign:              "62e05643cddd2fa2cd12fd46ba761073",
-		},
-		HttpStatusCode: 200,
-		ErrorCode:      0,
-		Message:        "u5f02u6b65u56deu8c03",
-	}
+// {\"id\":\"202602351322634130\",\"date\":\"16.03.2026 10:57\",\"amount\":100,\"card_number\":\"2345********4567\",\"status\":\"success\",\"currency\":\"TJS\"}
+func GenWdRequestDemo() (payloadJson string, req SequoiaWithdrawCallbackReq) {
+	return "{\"id\":\"202602351322634130\",\"date\":\"16.03.2026 10:57\",\"amount\":100,\"card_number\":\"2345********4567\",\"status\":\"success\",\"currency\":\"TJS\"}",
+		SequoiaWithdrawCallbackReq{
+			Id:         "202602351322634130",
+			Date:       "16.03.2026 10:57",
+			Amount:     100,
+			CardNumber: "2345678901234567",
+			Status:     "success",
+			Currency:   "TJS",
+		}
 }
