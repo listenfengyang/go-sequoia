@@ -2,7 +2,6 @@ package go_sequoia
 
 import (
 	"testing"
-	"time"
 )
 
 func TestDeposit(t *testing.T) {
@@ -39,8 +38,6 @@ func GenDepositRequestDemo() SequoiaDepositReq {
 		Currency:       "AZN",
 		MerchantUserId: "321421",
 		MerchantUserIp: "35.76.173.139",
-		Date:           time.Now().Format(time.DateTime),
-		WalletProvider: "Kaspi Bank", // DUSHANBE_CITY, UZCARD, 无, 无, Kaspi Bank
 		SenderName:     "jane",
 		CardNumber:     "2345678901234567", // 16dg
 		Email:          "2535@gmail.com",

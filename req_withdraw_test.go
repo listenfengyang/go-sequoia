@@ -30,12 +30,9 @@ func TestWithdraw(t *testing.T) {
 // TJS, UZS, KGS, AZN, KZT
 func GenWithdrawRequestDemo() SequoiaWithdrawReq {
 	return SequoiaWithdrawReq{
-		Id:             "202602351322634130",
-		Date:           "2020-06-29 21:10:36",
-		CardNumber:     "2345678901234567",
-		Amount:         "100",
-		Currency:       "TJS",
-		WalletProvider: "DUSHANBE_CITY",
-		PayOutMethod:   "DUSHANBE_CITY",
+		Id:         "202602351322634130",
+		CardNumber: "2345678901234567",
+		Amount:     "10",
+		Currency:   "TJS",
 	}
 }

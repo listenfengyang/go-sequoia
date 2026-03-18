@@ -3,6 +3,7 @@ package go_sequoia
 import (
 	"crypto/tls"
 	"fmt"
+	"time"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/listenfengyang/go-sequoia/utils"
@@ -16,17 +17,25 @@ func (cli *Client) Deposit(req SequoiaDepositReq) (*SequoiaDepositRsp, error) {
 
 	var params map[string]string
 	mapstructure.Decode(req, &params)
+	params["date"] = time.Now().Format(time.DateTime)
 	params["callback_url"] = cli.Params.DepositNotifyUrl
 	params["back_to_merchant_success_url"] = cli.Params.ReturnUrl
 	params["back_to_merchant_url"] = cli.Params.ReturnUrl
 
 	if req.Currency == "TJS" {
 		delete(params, "card_number")
-	} else if req.Currency != "KZT" {
 		delete(params, "send_name")
 		delete(params, "email")
-	} else if req.Currency == "UZS" || req.Currency == "KGS" {
-		delete(params, "wallet_provider")
+		params["wallet_provider"] = "DUSHANBE_CITY"
+	} else if req.Currency == "KZT" {
+		params["wallet_provider"] = "Kaspi Bank"
+	} else if req.Currency == "UZS" {
+		delete(params, "send_name")
+		delete(params, "email")
+		params["wallet_provider"] = "UZCARD"
+	} else if req.Currency == "KGS" {
+		delete(params, "send_name")
+		delete(params, "email")
 	}
 
 	// Generate signature

@@ -3,6 +3,7 @@ package go_sequoia
 import (
 	"crypto/tls"
 	"fmt"
+	"time"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/listenfengyang/go-sequoia/utils"
@@ -13,15 +14,17 @@ func (cli *Client) WithdrawReq(req SequoiaWithdrawReq) (*SequoiaWithdrawRsp, err
 
 	var params map[string]string
 	mapstructure.Decode(req, &params)
+	params["date"] = time.Now().Format(time.DateTime)
 	params["callback_url"] = cli.Params.WithdrawNotifyUrl
 
-	if req.Currency != "KZT" {
-		delete(params, "wallet_provider")
-		if req.Currency != "UZS" && req.Currency != "TJS" {
-			delete(params, "pay_out_method")
-		}
+	if req.Currency == "TJS" {
+
 	} else if req.Currency == "KZT" {
-		delete(params, "pay_out_method")
+		params["wallet_provider"] = "Kaspi Bank"
+	} else if req.Currency == "UZS" {
+		params["pay_out_method"] = "UZCARD"
+	} else if req.Currency == "KGS" {
+
 	}
 
 	merchantId, err := GetMerchantId(req.Currency, *cli.Params)
