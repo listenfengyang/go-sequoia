@@ -59,7 +59,10 @@ type SequoiaDepositRsp struct {
 }
 
 type DepositRspData struct {
-	RedirectUrl string `json:"redirect_url" mapstructure:"redirect_url"` // 重定向url
+	TargetCardNumber string `json:"target_card_number" mapstructure:"target_card_number"` // 目标卡号
+	Holder           string `json:"holder" mapstructure:"holder"`                         // 持卡人姓名
+	BankName         string `json:"bank_name" mapstructure:"bank_name"`                   // 银行名称
+	ValidTill        int64  `json:"valid_till" mapstructure:"valid_till"`                 // 有效期至（时间戳）
 }
 
 // Sequoia出金
