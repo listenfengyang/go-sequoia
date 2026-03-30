@@ -18,7 +18,7 @@ func (cli *Client) WithdrawReq(req SequoiaWithdrawReq) (*SequoiaWithdrawRsp, err
 	params["callback_url"] = cli.Params.WithdrawNotifyUrl
 
 	if req.Currency == "TJS" {
-
+		params["pay_out_method"] = "DUSHANBE_CITY"
 	} else if req.Currency == "KZT" {
 		params["wallet_provider"] = "Kaspi Bank"
 	} else if req.Currency == "UZS" {
