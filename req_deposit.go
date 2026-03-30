@@ -80,7 +80,7 @@ func (cli *Client) Deposit(req SequoiaDepositReq) (*SequoiaDepositRsp, error) {
 
 	if resp2.Error() != nil {
 		//反序列化错误会在此捕捉
-		return nil, fmt.Errorf("%v, body:%s", resp2.Error(), resp2.Body())
+		return &result, fmt.Errorf("%v, body:%s", resp2.Error(), resp2.Body())
 	}
 
 	return &result, nil

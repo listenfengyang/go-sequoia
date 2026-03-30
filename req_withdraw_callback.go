@@ -7,10 +7,10 @@ import (
 )
 
 // 出金-成功回调
-func (cli *Client) WithdrawCallback(sign string, payload string, req SequoiaWithdrawCallbackReq, processor func(req SequoiaWithdrawCallbackReq) error) error {
+func (cli *Client) WithdrawCallback(sign, signKey string, payload string, req SequoiaWithdrawCallbackReq, processor func(req SequoiaWithdrawCallbackReq) error) error {
 
 	// Verify signature
-	flag := utils.VerifyCallback(sign, payload, cli.Params.MerchantInfo.WebhookSecretTJS)
+	flag := utils.VerifyCallback(sign, payload, signKey)
 	if !flag {
 		//签名校验失败
 		cli.logger.Errorf("sequoia withdraw back verify fail, req: %s", payload)

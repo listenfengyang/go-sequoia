@@ -39,7 +39,7 @@ func Verify(signature string, params map[string]string, signKey string) (bool, e
 
 // 入金&出金回调-成功-验签
 func VerifyCallback(sign, payloadJson, signKey string) bool {
-	fmt.Printf("payload json: %s\n", payloadJson)
+	fmt.Printf("payload json: %s signKey: %s\n", payloadJson, signKey)
 	mac := hmac.New(sha256.New, []byte(signKey))
 	if _, err := mac.Write([]byte(payloadJson)); err != nil {
 		return false

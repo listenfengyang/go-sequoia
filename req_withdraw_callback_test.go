@@ -17,7 +17,7 @@ func TestWithdrawCallback(t *testing.T) {
 
 	payloadJson, req := GenWdRequestDemo()
 
-	err := cli.WithdrawCallback(headerSign, payloadJson, req, func(req SequoiaWithdrawCallbackReq) error { return nil })
+	err := cli.WithdrawCallback(headerSign, cli.Params.MerchantInfo.WebhookSecretTJS, payloadJson, req, func(req SequoiaWithdrawCallbackReq) error { return nil })
 	if err != nil {
 		cli.logger.Errorf("Error:%s", err.Error())
 		return

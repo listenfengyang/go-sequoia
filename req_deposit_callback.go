@@ -8,11 +8,11 @@ import (
 )
 
 // 充值-成功回调（原始版本，沿用 MD5 验签）
-func (cli *Client) DepositCallback(headerSign string, req SequoiaDepositCallbackReq, processor func(SequoiaDepositCallbackReq) error) error {
+func (cli *Client) DepositCallback(headerSign, signKey string, req SequoiaDepositCallbackReq, processor func(SequoiaDepositCallbackReq) error) error {
 	//验证签名
 	data, _ := json.Marshal(req)
 	payload := string(data)
-	flag := utils.VerifyCallback(headerSign, payload, cli.Params.MerchantInfo.WebhookSecretTJS)
+	flag := utils.VerifyCallback(headerSign, payload, signKey)
 	if !flag {
 		//签名校验失败
 		reqJson, _ := json.Marshal(req)
