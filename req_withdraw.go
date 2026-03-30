@@ -63,12 +63,12 @@ func (cli *Client) WithdrawReq(req SequoiaWithdrawReq) (*SequoiaWithdrawRsp, err
 
 	if resp2.StatusCode() != 200 {
 		//反序列化错误会在此捕捉
-		return nil, fmt.Errorf("status code: %d", resp2.StatusCode())
+		return &result, fmt.Errorf("status code: %d", resp2.StatusCode())
 	}
 
 	if resp2.Error() != nil {
 		//反序列化错误会在此捕捉
-		return nil, fmt.Errorf("%v, body:%s", resp2.Error(), resp2.Body())
+		return &result, fmt.Errorf("%v, body:%s", resp2.Error(), resp2.Body())
 	}
 
 	return &result, nil

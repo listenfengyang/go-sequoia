@@ -75,7 +75,7 @@ func (cli *Client) Deposit(req SequoiaDepositReq) (*SequoiaDepositRsp, error) {
 
 	if resp2.StatusCode() != 200 {
 		//反序列化错误会在此捕捉
-		return nil, fmt.Errorf("status code: %d", resp2.StatusCode())
+		return &result, fmt.Errorf("status code: %d", resp2.StatusCode())
 	}
 
 	if resp2.Error() != nil {
