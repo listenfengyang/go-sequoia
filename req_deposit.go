@@ -29,13 +29,16 @@ func (cli *Client) Deposit(req SequoiaDepositReq) (*SequoiaDepositRsp, error) {
 		params["wallet_provider"] = "DUSHANBE_CITY"
 	} else if req.Currency == "KZT" {
 		params["wallet_provider"] = "Kaspi Bank"
+		delete(params, "p2p_scheme")
 	} else if req.Currency == "UZS" {
 		delete(params, "send_name")
 		delete(params, "email")
+		delete(params, "p2p_scheme")
 		params["wallet_provider"] = "UZCARD"
 	} else if req.Currency == "KGS" {
 		delete(params, "send_name")
 		delete(params, "email")
+		delete(params, "p2p_scheme")
 	}
 
 	// Generate signature

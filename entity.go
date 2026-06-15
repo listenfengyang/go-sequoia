@@ -46,6 +46,7 @@ type SequoiaDepositReq struct {
 	CardNumber               string `json:"card_number" mapstructure:"card_number" config:"card_number"  yaml:"card_number"`
 	SenderName               string `json:"sender_name" mapstructure:"sender_name" config:"sender_name"  yaml:"sender_name"`
 	Email                    string `json:"email" mapstructure:"email" config:"email"  yaml:"email"`
+	P2pScheme                string `json:"p2p_scheme" mapstructure:"p2p_scheme" config:"p2p_scheme"  yaml:"p2p_scheme"` //p2p模式 1=银行卡 2=手机号
 
 	// MerchantId               string  `json:"merchantId" mapstructure:"merchantId" config:"merchantId"  yaml:"merchantId"`                                                         // 商户id
 	// CallbackUrl string `json:"callback_url" mapstructure:"callback_url" config:"callback_url"  yaml:"callback_url"` // 回调地址
@@ -100,6 +101,7 @@ type SequoiaDepositCallbackReq struct {
 	Currency       string `json:"currency" form:"currency" mapstructure:"currency"`                         // 币种
 	ShowIntruction *bool  `json:"show_instruction" form:"show_instruction" mapstructure:"show_instruction"` // 是否展示_instructions，允许为 null
 	IsRepayment    bool   `json:"is_repayment" form:"is_repayment" mapstructure:"is_repayment"`             // 是否为还款
+	WalletProvider string `json:"wallet_provider" form:"wallet_provider" mapstructure:"wallet_provider"`    // 钱包供应商
 }
 
 type DepositCallbackData struct {

@@ -59,5 +59,6 @@ func GenCallbackRequestDemo() SequoiaDepositCallbackReq {
 		Currency:       "AZN",
 		ShowIntruction: nil,
 		IsRepayment:    false,
+		// WalletProvider: "Kaspi Bank",
 	}
 }
